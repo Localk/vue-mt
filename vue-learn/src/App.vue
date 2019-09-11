@@ -1,9 +1,10 @@
 <template>
-  <div id="app">
+  <div id="app2">
     <img alt="Vue logo" src="./assets/logo.png">
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <com :age="age" @patch="get_from_sub">
       <h3>我要加东西</h3>
+      <router-view></router-view>
     </com>
   </div>
 </template>
