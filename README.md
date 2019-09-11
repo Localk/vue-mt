@@ -82,6 +82,14 @@ methods:{
 ```
 ### 3. slot
 
+## （四）路由
+
+### 1、安装路由模块
+
+> 官方文档 ： https://router.vuejs.org/zh/
+
+
+
 
 
 
