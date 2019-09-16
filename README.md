@@ -23,6 +23,10 @@ npm run serve
 
 在es6中，提供了模块的概念，支持使用 `import ` 关键字，来导入一个模块。一个模块就是一个js文件，该js文件，需要使用 `export` 来导出模块
 
+## 事件参考
+
+[https://developer.mozilla.org/zh-CN/docs/Web/Events#%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%88%AB](https://developer.mozilla.org/zh-CN/docs/Web/Events#最常见的类别)
+
 # 一、vue回顾
 
 ## （一）模板语法
@@ -164,6 +168,141 @@ new Vue({
 // 如果构造函数的参数里，没有 render，或者 render 没有绑定到一个 id =app 的元素上
 //    则绑定到 $mount 函数指向的根元素 上。
 ```
+
+## （六）Vuex
+
+> vuex ，是vue中使用的状态共享模块。
+
+### 1、state
+
+为了实现所有的组件，都能访问到公共的状态属性，除了直接访问全局变量的方式，还能通过给 根组件，注入Vuex的方法，为Vue添加全局组件 vuex，然后在root 的vue 对象中，注入 vuex实例：
+
+```javascript
+// 构造 store 对象
+import vuex from "vuex"
+const store = new vuex.Store({
+    // store 初始化对象
+})
+
+// 注入到 vue 根对象中
+import store from "./store"
+new Vue({
+  render: h => h(App),
+  router,
+  store, // vue 对象的 store 属性，存储 共享状态的 store 对象
+}).$mount('#app2')
+```
+
+在父组件上 注入 store 属性后，该父组件下的所有子组件，都能实现 store 的共享：
+
+```javascript
+// 在子组件中，访问共享的状态库
+this.$store .....
+```
+
+### 2、mutation
+
+修改 vuex 中状态的值，只能通过 mutation。且只能同步修改
+
+```javascript
+const store = new vuex.Store({
+    // store 初始化对象
+    store,
+    /*
+    mutations，用来修改  state
+    里面定义 方法，每个方法触发时，会传入要修改的对象，还可以添加额外的事件参数
+    */
+    mutations:{
+        f1(state,参数1，参数2){
+            // f1 定义对数据的某种操作
+            // 传入的第一个参数，是要修改和读取信息的对象
+            // 还可以传入其他的参数
+            // 函数内容，只能是同步函数
+        }
+    }
+})
+```
+
+在 store 中定义的mutations，能修改其自身的 state，但是mutations 的方法，不能直接调用。使用的方式类似于事件调用，只能使用 Store 对象提供的`commit` 方法
+
+```javascript
+// 支持的方法：
+Store.commit('触发的mutations方法名',传入的额外参数)
+
+// 在组件中，使用提交，来修改store中的状态
+this.$store.commit('触发的mutations方法名',传入的额外参数)
+```
+
+### 3、actions
+
+actions 的作用
+
+* 用来触发 mutations，而不是直接操作 state
+* 可以使用异步操作
+
+定义 actions：
+
+```javascript
+import vuex from "vuex"
+const state = {
+    u_num:2,
+    u_list:[
+        {uid:1,uname:'root',upwd:'123456'},
+        {uid:2,uname:"test1",upwd:'123456'},
+    ]
+}
+const store = new vuex.Store({
+    // store 初始化对象
+    store,
+    // mutations，用来修改  state 
+    mutations:{
+        f1(state){
+            console.log('mutations - state:'+state.u_num);
+        }
+    },
+    /*
+    	actions 属性定义的操作，是用来触发 mutations 的，不能操作 state
+    	actions 中，函数传入的第一个参数，是一个和 vuex.store 相同的对象，所以能直接使用 store 的属性和方法。
+    */
+    actions:{
+        f1(context){
+            // context 是和 vuex.store 相同的对象
+            context.commit('f1')
+        }
+    }
+})
+```
+
+在组件中，如果需要触发 actions，使用 `store.dispatch`来触发。
+
+```javascript
+this.$store.dispath('f1')
+/*
+	dispatch 先触发 actions 中的函数
+	actions 中的函数，又触发了mutaions
+*/
+```
+
+如果在组建中，使用`dispatch` 触发比较麻烦，还可以 将 store 中定义的actions 打散到组件的 methods 属性中，然后通过组件自身调用方法，将方法映射为 store 的actions 函数，该方法使用的是 `mapActions` 函数，函数返回的是一个对象，直接使用`...` 来打散展开
+
+```javascript
+// templates :
+
+export default {
+    methods:{
+        f1(){}, // 组件中原来的自有函数
+        ...mapActions(['actions 中的函数名'])
+        // 打散之后，在组件中，可以直接调用
+        // this.f1() ==> this.$store.dispatch('f1')
+        // 前提是methods 中自定义函数，和 actions 中的函数不冲突
+    }
+}
+
+```
+
+# 二、koa2
+
+
 
 
 
