@@ -301,6 +301,56 @@ export default {
 ```
 
 # 二、koa2
+## （一）项目安装
+### 1、安装脚手架
+```javascript
+npm install -g koa-generator
+```
+安装脚手架，自动将koa 作为依赖安装。
+### 2、创建koa项目
+```javascript
+koa2 -e project_name
+```
+`-e` 指的是使用ejs模板引擎。该命令生成一个完整的脚手架文件。
+### 3、运行项目
+```javascript
+cd koa-learn 
+npm install
+SET DEBUG=koa* 
+npm start koa-learn
+```
+命令运行结束，访问 3000 端口，能成功访问到页面，服务就启动成功了。在调试中，如果想要修改后自动重启服务：
+```javascript
+npm run dev
+```
+除了 npm start 命令，其他命令需要使用 npm run 来运行。
+
+## （二）异步
+
+koa中大量使用 async / await 来进行一步调用
+
+## （三）中间件
+
+### 1、创建中间件
+
+中间件，传入两个参数，一个是ctx对象，一个是next对象。ctx对象存储着请求和响应信息，next对象代表下一个中间件。中间件需要导出一个函数，该函数作为app.use 的参数传递：
+
+```
+// 中间件.js
+module.exports = async function(ctx,next){
+	// code 中间件的功能
+	// 中间件操作完毕后，需要调用next ，去执行下一个中间件
+	await next();
+}
+
+//  app.js 主程序中
+const midd = require('./导入中间件path');
+
+app.use(midd)
+```
+
+**app.use 的参数，需要是一个函数，如果中间件导出的就是函数，则直接当做app.use 的参数。如果中间件导出的是一个返回函数的函数，那么还需要在app.use 中调用一下**
+
 
 
 
