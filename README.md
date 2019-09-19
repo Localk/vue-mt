@@ -386,10 +386,18 @@ rout.prefix('/user'); // 设置请求前缀，只有以 /user 开头的请求，
 | router.prefix | 设置请求路径前缀，只有符合该条件的请求，才会被路由处理 |
 | get/post/...  | 对应的请求 method 名称                                 |
 
+## （四）cookies 和 session
+每一个进入的请求，都可以使用 ctx 对象，来给这个请求设置cookie。不同的请求之间，cookie 是不同的，且不会发生混合的情况。
 
 
+# 三、MongoDB 和 Redis
+## （一）MongoDB
+### 1、MongoDB的安装
+## （二）Redis
 
-
+# 四、Nuxt.js
+## (一)概述
+用来做 ssr 的框架。基于vue 。支持 vue router 、vuex、vue server renderer、vue-meta。使用vue开发的项目，是打包之后，形成HTML+css+js 的文件，然后由浏览器获取，并且由浏览器解析执行。这样导致的问题是，基于vue的SPA首屏加载时间过长；而且，使用js向页面内注入内容，不利于seo。而ssr 是在服务端合成HTML，然后发送给浏览器。
 
 
 
