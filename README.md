@@ -396,8 +396,141 @@ rout.prefix('/user'); // 设置请求前缀，只有以 /user 开头的请求，
 ## （二）Redis
 
 # 四、Nuxt.js
-## (一)概述
+## （一）概述
+### 1、概述
 用来做 ssr 的框架。基于vue 。支持 vue router 、vuex、vue server renderer、vue-meta。使用vue开发的项目，是打包之后，形成HTML+css+js 的文件，然后由浏览器获取，并且由浏览器解析执行。这样导致的问题是，基于vue的SPA首屏加载时间过长；而且，使用js向页面内注入内容，不利于seo。而ssr 是在服务端合成HTML，然后发送给浏览器。
+
+### 2、创建一个nuxt 项目
+```JavaScript
+vue init nuxt-community/koa-template 项目名称
+// 如果提示缺少@vue/cli-init，在安装一个依赖
+// npm install -g @vue/cli-init
+```
+文件夹创建成功后，进入文件夹，然后安装依赖，运行项目：
+```JavaScript
+cd 项目名称
+npm install 
+npm run dev
+```
+如果运行中报错，参考这个博客:
+```
+https://www.cnblogs.com/ITtt/p/10515456.html
+```
+### 3、目录说明
+|目录名|说明|
+|----|----|
+|assets文件|放置静态资源文件|
+|backpack.config.js|后端编译脚本，基本不用|
+|build文件|所有编译完之后的文件|
+|components文件|组件|
+|layouts文件|模板|
+|nuxt.config.js|nuxt的配置文件|
+|pages文件|页面入口|
+|server文件夹|koa相关|
+|static文件夹|静态文件目录|
+|store文件夹|放置vuex 的|
+
+## （二）基础
+### 0、nuxt.config.js文件
+对整个HTML页面，进行配置。
+`head` 配置页面head标签
+`css` 配置全局的css
+### 1、路由 - pages文件夹
+pages文件夹下，创建的文件，都是一个vue文件。类似于vue 中的views 组件，可以作为单页应用的一个页面，用来对地址栏路由进行匹配。
+例如，pages 下存在三个.vue 文件：
+```
+pages/
+    index.vue
+    about.vue
+    profile.vue
+```
+当请求的地址是`http://127.0.0.1:3000/` 或者`http://127.0.0.1:3000/index`是，显示的页面是index.vue 文件的内容；当请求地址是`http://127.0.0.1:3000/about`时，显示的页面是 about.vue 文件的内容。
+所以，pages下的vue文件，自动分配给全局的路由，文件名作为路由的地址名。
+pages 文件中，可以使用`<nuxt-link class="button" to="/about">
+      About page
+    </nuxt-link>`组件，来当做跳转的按钮。类似于 vue 中的`router-link`
+### 2、布局 - layouts文件夹
+layouts文件夹下的vue文件，是布局中使用的。用来将pages中的vue文件， 和其他的组件，进行合并，一同渲染出来页面。比如pages中有一个现实中间内容的vue文件，在layouts模板文件中，先填充进pages中的文件，在填充一个页眉，或者页脚的其他组件，共同组成一个完整的页面（不准确的说，类似于layouts组件，引用了pages组件）
+模板中的 `<nuxt/>` 标签，相当于vue 中的 `router-view` ，是用来被pages中的组件代替的标签。
+
+布局文件夹下，有一个default.vue的文件，默认时，路由文件渲染时，采用的布局模板就是layouts文件夹下的default.vue文件。如果想使用自己定义的layouts布局文件：
+```JavaScript
+//1. 先在layouts文件夹下，定义一个自定义模板
+<template>
+    <div>
+        <....> // 布局文件个性化内容
+        <nuxt /> // 这个是用来替换pages 下的页面内容
+    </div>
+</template>
+
+// 2. 在 pages 下的文件中，为当前文件，指定布局文件
+<script>
+export default {
+    layout:"search" , // 当前路由文件，渲染时使用 layouts/search.vue 模板
+}
+</script>
+```
+
+## （三）获取异步数据
+### 1、asyncData
+在组件加载之前调用，用来异步获取数据
+
+## （四）Vuex应用
+### 1、使用vuex
+如果项目的根目录下，有store文件夹，则nuxt会做如下几件事：
+* 引用vuex 模块
+* 将 vuex 模块 加到 vendors 构建配置中去
+* 设置 Vue 根实例的 store 配置项
+在创建的 vuex 实例中，state状态，返回值应该是一个函数
+
+
+# 五、环境准备
+### 1、环境版本号
+* node - 8.12
+* vue - 2.5.17
+* npm - 6.4.1
+* webpack - 6.4.1
+* nuxt - 2.0.0
+### 2、创建项目
+```
+// nuxt官方提供了创建脚手架工具，npx，npx在npm5以上的版本，默认安装
+npm install -g npm
+npm create-nuxt-app 工程名称
+cd path
+npm install
+```
+### 3、配置babel插件
+因为npx创建的项目，不支持es6，对于es6语法不能进行转换，所以需要手动卑职
+```
+//1. 在启动命令中，配置babel，每次启动时，语法转换
+// 在命令末尾加上 --exec babel-node
+cross-env NODE_ENV=development nodemon server/index.js --watch server 
+
+// 2. 然后设置babel配置文件
+//    在根目录下添加 .babelrc 文件
+{
+     "presets":["es2015"]
+}
+
+// 3. 安装babel插件
+npm install babel-preset-es2015
+```
+
+### 4、项目中引入sass
+```
+npm install sass-loader node-sass
+```
+
+### 5、辅助工具安装
+MongoDB 、 Redis 、 studio 3T
+
+### 6、修改build
+在 nuxt.config.js 中，配置css 。
+
+
+
+
+
 
 
 
